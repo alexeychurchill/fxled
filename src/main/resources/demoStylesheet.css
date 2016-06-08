@@ -1,0 +1,7 @@
+.led {
+    /*led style*/
+    -led-background-color: #310052;
+    -led-on-color: #FF00F7;
+    -led-off-color: #9E0099;
+    -led-size: 0.9;
+}

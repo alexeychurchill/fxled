@@ -1,0 +1,22 @@
+group 'com.alexeychurchill.fxled'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task(runDemo, dependsOn: 'classes', type: JavaExec) {
+    main = 'Demo'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+jar {
+    exclude ('Demo.class')
+    exclude ('demoStylesheet.css')
+}
