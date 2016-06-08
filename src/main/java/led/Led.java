@@ -97,7 +97,7 @@ public class Led extends Control {
     }
 
     private void initializeLedSize() {
-        ledSize = new StyleableDoubleProperty() {
+        ledSize = new StyleableDoubleProperty(DEFAULT_LED_SIZE) {
             @Override
             public Object getBean() {
                 return this;
