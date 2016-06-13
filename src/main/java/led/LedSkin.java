@@ -5,6 +5,7 @@ import javafx.animation.Transition;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 
 public class LedSkin extends BehaviorSkinBase<Led, LedBehavior> {
@@ -12,10 +13,9 @@ public class LedSkin extends BehaviorSkinBase<Led, LedBehavior> {
     private static final double COLOR_CHANGE_DURATION = 150.0;
     //...
     private Led led;
-    private double currentSize = 1.0;
+    private double totalDiameterPx = 1.0;
     //Nodes
     private StackPane container;
-    private Circle backgroundCircle;
     private Circle ledCircle;
 
     public LedSkin(Led led) {
@@ -36,7 +36,7 @@ public class LedSkin extends BehaviorSkinBase<Led, LedBehavior> {
 
     @Override
     protected void layoutChildren(double contentX, double contentY, double contentWidth, double contentHeight) {
-        currentSize = Math.min(contentWidth, contentHeight);
+        totalDiameterPx = Math.min(contentWidth, contentHeight);
         resize();
         super.layoutChildren(contentX, contentY, contentWidth, contentHeight);
     }
@@ -44,13 +44,12 @@ public class LedSkin extends BehaviorSkinBase<Led, LedBehavior> {
     private void draw() {
         container = new StackPane();
         double ledSize = led.ledSizeProperty().get();
-        //Background
-        backgroundCircle = new Circle(currentSize / 2.0);
-        backgroundCircle.setFill(led.backgroundColorProperty().get());
-        container.getChildren().add(backgroundCircle);
         //Foreground
-        ledCircle = new Circle(ledSize * (currentSize / 2.0));
+        ledCircle = new Circle(ledSize * (totalDiameterPx / 2.0));
         ledCircle.setFill((led.stateProperty().get()?led.onColorProperty().get():led.offColorProperty().get()));
+        //Background stroke
+        ledCircle.setStrokeType(StrokeType.OUTSIDE);
+        ledCircle.setStroke(Color.BLACK);
         container.getChildren().add(ledCircle);
         //...
         getChildren().clear();
@@ -58,12 +57,13 @@ public class LedSkin extends BehaviorSkinBase<Led, LedBehavior> {
     }
 
     private void resize() {
-        if (container == null || backgroundCircle == null || ledCircle == null) {
+        if (container == null || ledCircle == null) {
             draw();
         }
         double ledSize = led.ledSizeProperty().get();
-        backgroundCircle.setRadius(currentSize / 2.0);
-        ledCircle.setRadius(ledSize * (currentSize / 2.0));
+        double totalRadiusPx = totalDiameterPx / 2.0;
+        ledCircle.setRadius(totalRadiusPx * ledSize);
+        ledCircle.setStrokeWidth(totalRadiusPx * (1.0 - ledSize));
     }
 
     @Override
@@ -105,7 +105,7 @@ public class LedSkin extends BehaviorSkinBase<Led, LedBehavior> {
     }
 
     private void backgroundColorChange() {
-        backgroundCircle.setFill(led.backgroundColorProperty().get());
+        ledCircle.setStroke(led.backgroundColorProperty().get());
     }
 
     private void animateOff() {
